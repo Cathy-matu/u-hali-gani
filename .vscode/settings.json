@@ -1,0 +1,12 @@
+{
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/hali-backend"
+  ],
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/hali-backend"
+  ],
+  "files.associations": {
+    "*.py": "python"
+  }
+}
+

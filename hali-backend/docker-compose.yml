@@ -1,0 +1,100 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hali_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hali_app
+      POSTGRES_PASSWORD: hali_secure_app_password
+      POSTGRES_DB: hali_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/setup_rls.sql:/docker-entrypoint-initdb.d/02_setup_rls.sql:ro
+    # Only expose port locally for development/debugging, never public
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hali_app -d hali_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hali_internal
+
+  redis:
+    image: redis:7-alpine
+    container_name: hali_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    # Only expose port locally for development/debugging, never public
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hali_internal
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hali_backend
+    restart: unless-stopped
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - DATABASE_URL=postgresql://hali_app:hali_secure_app_password@postgres:5432/hali_db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - SECRET_KEY=insecure_dev_jwt_secret_key_change_in_production_please_min_32_bytes
+      - DEFAULT_UNIVERSITY_ID=11111111-1111-1111-1111-111111111111
+      - K_ANONYMITY_THRESHOLD=15
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hali_internal
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hali_celery_worker
+    restart: unless-stopped
+    command: ["celery", "-A", "app.workers.celery_app.celery_app", "worker", "--loglevel=info"]
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=postgresql://hali_app:hali_secure_app_password@postgres:5432/hali_db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - SECRET_KEY=insecure_dev_jwt_secret_key_change_in_production_please_min_32_bytes
+      - DEFAULT_UNIVERSITY_ID=11111111-1111-1111-1111-111111111111
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hali_internal
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  hali_internal:
+    driver: bridge
+
