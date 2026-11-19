@@ -1,0 +1,8 @@
+export const FREQ = ['Not at all', 'Several days', 'More than half the days', 'Nearly every day']
+export const WHO_OPT = ['At no time', 'Some of the time', 'Less than half the time', 'More than half the time', 'Most of the time', 'All of the time']
+const mk = (k, name, scale, arr) => arr.map((text, i) => ({ id: `${k}${i + 1}`, inst: name, text, scale }))
+export const PHQ = mk('phq', 'PHQ-9', 'freq', ['Little interest or pleasure in doing things', 'Feeling down, depressed, or hopeless', 'Trouble falling or staying asleep, or sleeping too much', 'Feeling tired or having little energy', 'Poor appetite or overeating', 'Feeling bad about yourself, or that you are a failure or have let yourself or your family down', 'Trouble concentrating on things, such as reading or watching TV', 'Moving or speaking so slowly that others noticed, or being so fidgety or restless that you moved around a lot more than usual', 'Thoughts that you would be better off dead, or of hurting yourself in some way'])
+export const GAD = mk('gad', 'GAD-7', 'freq', ['Feeling nervous, anxious, or on edge', 'Not being able to stop or control worrying', 'Worrying too much about different things', 'Trouble relaxing', 'Being so restless that it is hard to sit still', 'Becoming easily annoyed or irritable', 'Feeling afraid, as if something awful might happen'])
+export const WHO = mk('who', 'WHO-5', 'who', ['I have felt cheerful and in good spirits', 'I have felt calm and relaxed', 'I have felt active and vigorous', 'I woke up feeling fresh and rested', 'My daily life has been filled with things that interest me'])
+export const SHORT = [PHQ[0], PHQ[1], GAD[0], GAD[1], PHQ[8]]
+export const FULL = [...PHQ, ...GAD, ...WHO]

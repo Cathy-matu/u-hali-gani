@@ -1,0 +1,62 @@
+export const PSEUDONYM = 'Quiet-Acacia-417'
+export const counsellors = [
+  { id: 1, name: 'Dr. Amina Wekesa', spec: 'Anxiety & academic stress', modes: ['In-person', 'Audio', 'Text'], online: true },
+  { id: 2, name: 'Mr. Brian Otieno', spec: 'Relationships & loneliness', modes: ['In-person', 'Text'], online: false },
+  { id: 3, name: 'Ms. Grace Mutua', spec: 'Sleep, mood & low motivation', modes: ['Audio', 'Text'], online: true },
+]
+export const slots = ['09:00', '10:30', '12:00', '14:00', '15:30']
+export const moods = [['Great', '😄'], ['Good', '🙂'], ['Okay', '😐'], ['Low', '😔'], ['Struggling', '😞']]
+export const moodHistory = [['Mon','Good'],['Tue','Okay'],['Wed','Low'],['Thu','Okay']]
+export const resources = [
+  { id: 1, cat: 'Breathing', title: '4-6 breathing for exam nerves', body: 'Breathe in for 4 counts, out for 6. Repeat for 2 minutes. Slow exhales calm the body’s stress response.' },
+  { id: 2, cat: 'Stress', title: 'Break a big deadline into small steps', body: 'List the next three actions only. Start a 15-minute timer. Stopping after one round is fine.' },
+  { id: 3, cat: 'Sleep', title: 'A simple wind-down routine', body: 'Dim screens 30 minutes before bed, keep a steady wake time, and write tomorrow’s worries on paper.' },
+  { id: 4, cat: 'Anxiety', title: 'Name it to tame it', body: 'Write what you are worried about, then split it into what you can control and what you cannot.' },
+  { id: 5, cat: 'Relationships', title: 'Starting a hard conversation', body: 'Open with how you feel, not what they did. Pick a calm time and keep your first message short.' },
+  { id: 6, cat: 'Campus', title: 'Campus support directory', body: 'Counselling centre, health clinic, chaplaincy and student welfare office. Contact details are configurable placeholders.' },
+]
+export const helpContacts = [
+  { tier: 0, label: 'Campus counselling centre (placeholder)', tel: '+254 700 000 001' },
+  { tier: 1, label: 'On-duty counsellor line (placeholder)', tel: '+254 700 000 002' },
+  { tier: 2, label: 'Campus clinic (placeholder)', tel: '+254 700 000 003' },
+  { tier: 2, label: 'National helpline (placeholder, verify before launch)', tel: '+254 700 000 004' },
+  { tier: 3, label: 'Campus security (placeholder)', tel: '+254 700 000 005' },
+]
+export const cases = [
+  { id: 'Swift-Baobab-208', risk: 'red', trend: 'worsening', last: 'Today 08:12', phq: [6, 9, 12, 15], gad: [5, 8, 10, 13], status: 'Escalated', next: 'Today 14:00' },
+  { id: 'Calm-Mango-532', risk: 'amber', trend: 'worsening', last: 'Yesterday', phq: [5, 7, 8, 10], gad: [6, 7, 9, 9], status: 'Active', next: 'Fri 10:30' },
+  { id: 'Gentle-River-119', risk: 'amber', trend: 'stable', last: '2 days ago', phq: [8, 8, 7, 8], gad: [7, 6, 7, 7], status: 'Active', next: 'Mon 09:00' },
+  { id: 'Bright-Savanna-774', risk: 'green', trend: 'improving', last: '3 days ago', phq: [9, 7, 5, 3], gad: [8, 6, 4, 3], status: 'Monitoring', next: '—' },
+  { id: 'Still-Lantern-063', risk: 'green', trend: 'improving', last: 'Today', phq: [7, 5, 4, 2], gad: [6, 5, 3, 2], status: 'Monitoring', next: '—' },
+]
+export const brief = {
+  summary: 'Four check-ins over 3 weeks show rising low-mood and worry scores, with sleep disruption mentioned twice. Latest PHQ-2 and GAD-2 scores crossed the amber threshold.',
+  observations: ['Scores increased week on week', 'Reflection notes mention exam pressure and poor sleep', 'No positive response on the safety item this week'],
+  topics: ['Exam workload and study plan', 'Sleep routine', 'Support network on campus', 'Agree what a check-in plan looks like'],
+}
+export const appointmentsC = [
+  { id: 1, student: 'Swift-Baobab-208', off: 0, time: '14:00', type: 'Audio', status: 'Confirmed' },
+  { id: 2, student: 'Calm-Mango-532', off: 2, time: '10:30', type: 'In-person', status: 'Requested' },
+  { id: 3, student: 'Gentle-River-119', off: 4, time: '09:00', type: 'Text', status: 'Confirmed' },
+  { id: 4, student: 'Still-Lantern-063', off: -3, time: '10:30', type: 'In-person', status: 'Completed' },
+  { id: 5, student: 'Bright-Savanna-774', off: 1, time: '12:00', type: 'Audio', status: 'Requested' },
+  { id: 6, student: 'Calm-Mango-532', off: 0, time: '09:00', type: 'Text', status: 'Confirmed' },
+]
+export const monthly = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'].map((m, i) => ({ m, active: 520 + i * 95, sessions: 80 + i * 14 }))
+export const utilisation = [['In-person', 48], ['Audio', 31], ['Text', 21]].map(([name, value]) => ({ name, value }))
+export const weeks = ['W1','W2','W3','W4','W5','W6','W7','W8']
+export const adminSeries = weeks.map((w, i) => ({ w, checkins: 320 + i * 38, bookings: 40 + i * 6, phq: +(6.4 - i * .1).toFixed(1), gad: +(5.8 - i * .05).toFixed(1) }))
+export const riskDist = [{ name: 'Green', value: 71, fill: '#2F855A' }, { name: 'Amber', value: 22, fill: '#B7791F' }, { name: 'Red', value: 7, fill: '#C0504D' }]
+export const moodDist = [['Great', 18], ['Good', 34], ['Okay', 27], ['Low', 15], ['Struggling', 6]].map(([name, value]) => ({ name, value }))
+export const departments = [['Computer Science', 412], ['Business', 530], ['Nursing', 238], ['Law', 94], ['Theology', 7], ['Education', 8]].map(([name, n]) => ({ name, n }))
+export const auditLog = [
+  ['Today 09:14', 'Admin viewed aggregate report', 'Weekly participation'],
+  ['Today 08:50', 'Cohort suppression applied', 'Theology (n<10)'],
+  ['Yesterday', 'Counsellor added', 'Ms. G. Mutua'],
+  ['Mon', 'Platform setting changed', 'Min cohort size = 10'],
+]
+export const researchLog = [['Nov 12', 'Aggregate dashboard viewed'], ['Nov 10', 'De-identified dataset request drafted (not submitted)'], ['Nov 03', '3 participants withdrew consent']]
+export const assistantReplies = {
+  en: { default: 'I can share short coping skills and help you find the right support. I’m an AI, not a counsellor.', stress: 'Try box breathing: in 4, hold 4, out 4, hold 4. Want me to show a study-break plan too?', sleep: 'A steady wake time and screens off 30 minutes before bed often help. Would you like a counsellor to look at this with you?', human: 'That sounds heavy. I’m connecting you to a human counsellor now. You don’t have to explain everything again.' },
+  sw: { default: 'Naweza kukupa mbinu fupi za kujituliza. Mimi ni AI, si mshauri wa kibinadamu.', stress: 'Jaribu kupumua: vuta 4, shikilia 4, toa 4. Unataka ratiba ya mapumziko ya kusoma?', sleep: 'Amka saa moja kila siku na zima simu dakika 30 kabla ya kulala. Ungependa kuzungumza na mshauri?', human: 'Inaonekana ni mzito. Nakuunganisha na mshauri wa kibinadamu sasa.' },
+}
