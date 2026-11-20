@@ -12,6 +12,7 @@ const PublicLanding = lazy(() => import('./pages/public/Landing'))
 const PublicLogin = lazy(() => import('./pages/public/Login'))
 const PublicOnboarding = lazy(() => import('./pages/public/Onboarding'))
 const StudentDashboard = lazy(() => import('./pages/student/Dashboard'))
+const StudentCommunities = lazy(() => import('./pages/student/Communities'))
 const StudentMood = lazy(() => import('./pages/student/Mood'))
 const StudentAssessment = lazy(() => import('./pages/student/Assessment'))
 const StudentResources = lazy(() => import('./pages/student/Resources'))
@@ -33,7 +34,11 @@ const AdminManagement = lazy(() => import('./pages/admin/Management'))
 const ResearcherOverview = lazy(() => import('./pages/researcher/Overview'))
 const ResearcherConsent = lazy(() => import('./pages/researcher/Consent'))
 
-const Guard = ({ need, children }) => { const { role } = useApp(); return role === need ? children : <Navigate to="/login" replace /> }
+const Guard = ({ need, children }) => {
+  const { role, authReady } = useApp()
+  if (!authReady) return <Loading text="Restoring your secure session..." />
+  return role === need ? children : <Navigate to="/login" replace />
+}
 export default function App() {
   return (<>
     <Toaster position="top-center" />
@@ -43,7 +48,7 @@ export default function App() {
           <Route path="/" element={<PublicLanding />} /><Route path="/login" element={<PublicLogin />} /><Route path="/onboarding" element={<PublicOnboarding />} />
         </Route>
         <Route path="/student" element={<Guard need="student"><StudentLayout /></Guard>}>
-          <Route index element={<StudentDashboard />} /><Route path="mood" element={<StudentMood />} /><Route path="assessment" element={<StudentAssessment />} />
+          <Route index element={<StudentDashboard />} /><Route path="communities" element={<StudentCommunities />} /><Route path="mood" element={<StudentMood />} /><Route path="assessment" element={<StudentAssessment />} />
           <Route path="resources" element={<StudentResources />} /><Route path="book" element={<StudentBook />} /><Route path="messages" element={<StudentMessages />} />
           <Route path="assistant" element={<StudentAssistant />} /><Route path="privacy" element={<StudentPrivacy />} /><Route path="help" element={<StudentHelp />} />
         </Route>

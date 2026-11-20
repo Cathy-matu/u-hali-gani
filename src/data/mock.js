@@ -1,4 +1,3 @@
-export const PSEUDONYM = 'Quiet-Acacia-417'
 export const counsellors = [
   { id: 1, name: 'Dr. Amina Wekesa', spec: 'Anxiety & academic stress', modes: ['In-person', 'Audio', 'Text'], online: true },
   { id: 2, name: 'Mr. Brian Otieno', spec: 'Relationships & loneliness', modes: ['In-person', 'Text'], online: false },

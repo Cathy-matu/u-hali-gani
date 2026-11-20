@@ -16,5 +16,10 @@ self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWi
 
 export default defineConfig({
   plugins: [react(), offlineSW()],
+  server: {
+    proxy: {
+      '/api': 'http://127.0.0.1:8000',
+    },
+  },
   build: { rollupOptions: { output: { manualChunks: { vendor: ['react', 'react-dom', 'react-router-dom'], charts: ['recharts'] } } } },
 })
