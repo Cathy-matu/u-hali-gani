@@ -43,7 +43,7 @@ Run the backend and frontend in **two separate terminals**.
    npm run dev
    ```
 
-   The Vite development server proxies `/api` requests to the Hali backend on port 8001. Open the local URL printed by Vite, usually `http://localhost:5173`. If the API is hosted elsewhere, set `VITE_API_BASE_URL` to its `/api` URL before starting Vite.
+   The Vite development server proxies `/api` requests to the Hali backend on port 8001. Open the local URL printed by Vite, usually `http://localhost:5173`. The checked-in `.env.example` uses this same-origin `/api` path. For a deployed frontend calling a separately hosted API directly, set `VITE_API_BASE_URL` to the backend's full `/api` URL before building/redeploying the frontend, and add the exact frontend origin to the backend's `ALLOWED_ORIGINS`. Auth uses an HTTP-only cookie; configure `AUTH_COOKIE_SAMESITE=none` on the backend only when the frontend and API are on different sites, and serve both over HTTPS. Same-site custom domains or a same-origin `/api` proxy are more reliable where browsers restrict third-party cookies.
 
 3. Run backend auth tests from the frontend repository root:
 
@@ -70,7 +70,7 @@ Run the backend and frontend in **two separate terminals**.
 - Student: redesigned wellbeing dashboard, campus communities directory, mood and weekly check-ins, resources, counsellor booking, messaging, assistant, privacy centre, and help.
 - Counsellor: overview, cases, risk monitoring, appointments, and messaging.
 - Admin and researcher pages remain in the codebase but are not available through public account creation or sign-in.
-- Student check-ins, counselling workflows, appointments, messages, analytics, and research views remain sample-data prototype features. Authentication and account storage are server-backed; the rest of the product services are not yet connected to production data. Do not use sample-data features for real health records or care decisions.
+- Student and counsellor registration, sign-in, session restore, consent updates, and logout use the FastAPI backend. Student check-ins, counselling workflows, appointments, messages, analytics, and research views remain sample-data prototype features; those service endpoints are not implemented by the backend yet. Do not use sample-data features for real health records or care decisions.
 - The communities directory is a starter example, not an official university listing. Social buttons open public platform searches; they are not verified club accounts or social sign-in. Joining a group is saved only in the current browser and does not enroll or notify a real group. Replace the sample directory and links with university-verified details before launch.
 - The project also includes a PWA manifest and build-generated service worker. It is registered only in production builds (`npm run build && npm run preview`).
 
