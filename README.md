@@ -4,22 +4,36 @@ Hali is a React + Vite + Bootstrap frontend and FastAPI service for university w
 
 ## Run locally
 
-Run the backend and frontend in **two separate terminals** from the repository root.
+The frontend and backend are maintained in separate repositories. Keep the two repositories side by side:
+
+```text
+wellness/
+  hali-wellness/   # this frontend repository
+  hali-backend/    # https://github.com/Cathy-matu/uhali-gani-b
+```
+
+Clone the backend once from the frontend repository root if you do not already have the sibling folder:
+
+```sh
+git clone https://github.com/Cathy-matu/uhali-gani-b.git ../hali-backend
+```
+
+Run the backend and frontend in **two separate terminals**.
 
 1. In terminal 1, set up and start the API:
 
    ```sh
-   cd hali-backend
+   cd ../hali-backend
    python3 -m venv .venv
    . .venv/bin/activate
    pip install -r requirements-dev.txt
    cp .env.example .env
    ```
 
-   Edit `hali-backend/.env`: set `AUTH_SECRET_KEY` to a random secret (generate one with `openssl rand -hex 32`) and set `AUTH_COUNSELLOR_INVITE_CODE` if counsellor sign-up is needed. Then, in the same terminal:
+   Edit `.env`: set `AUTH_SECRET_KEY` to a random secret (generate one with `openssl rand -hex 32`) and set `AUTH_COUNSELLOR_INVITE_CODE` if counsellor sign-up is needed. Then, in the same terminal, start the API with the local SQLite database and port 8001:
 
    ```sh
-   uvicorn app.main:app --env-file .env --reload
+   DATABASE_URL=sqlite:///./hali.db uvicorn app.main:app --env-file .env --reload --port 8001
    ```
 
 2. Open terminal 2 at the repository root, install frontend dependencies (first run only), and start the frontend:
@@ -29,12 +43,12 @@ Run the backend and frontend in **two separate terminals** from the repository r
    npm run dev
    ```
 
-   The Vite development server proxies `/api` requests to the local backend on port 8000. Open the local URL printed by Vite, usually `http://localhost:5173`. If the API is hosted elsewhere, set `VITE_API_BASE_URL` to its `/api` URL before starting Vite.
+   The Vite development server proxies `/api` requests to the Hali backend on port 8001. Open the local URL printed by Vite, usually `http://localhost:5173`. If the API is hosted elsewhere, set `VITE_API_BASE_URL` to its `/api` URL before starting Vite.
 
-3. Run backend auth tests:
+3. Run backend auth tests from the frontend repository root:
 
    ```sh
-   cd hali-backend
+   cd ../hali-backend
    .venv/bin/python -m pytest tests
    ```
 
@@ -62,4 +76,4 @@ Run the backend and frontend in **two separate terminals** from the repository r
 
 ## Structure
 
-The frontend is organized into `components/`, `layouts/`, `pages/`, `services/`, `context/`, `hooks/`, `utils/`, and `data/`. The backend authentication service is in `hali-backend/app/`; it creates its initial tables at startup.
+The frontend is organized into `components/`, `layouts/`, `pages/`, `services/`, `context/`, `hooks/`, `utils/`, and `data/`. The separately maintained backend repository contains the authentication API and creates its initial tables at startup.
