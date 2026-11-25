@@ -1,14 +1,38 @@
-import { useState } from 'react'
-import toast from 'react-hot-toast'
-import { Card, Stat, Disclaimer } from '../../components/common/ui'
-import { researchLog } from '../../data/mock'
-
-
+import { Card, Disclaimer } from '../../components/common/ui'
+import { useApp } from '../../context/AuthContext'
+import { AGGREGATION_THRESHOLD, DOMAINS, summarizeSession } from '../../utils/longitudinal'
 export function ResearcherHome() {
-  return (<><h1 className="h3">Research overview</h1><Disclaimer>Prototype with synthetic data. No real exports and no ethical approval is implied.</Disclaimer>
-    <div className="row g-3 my-1">{[['Consenting participants', '214'], ['Re-contact consent', '96'], ['Withdrawals (30 days)', '3']].map(([l, v]) => <div className="col-md-4" key={l}><Stat label={l} value={v} /></div>)}</div>
-    <div className="row g-3 mb-3"><div className="col-md-6"><Card title="Aggregate statistics (groups of 10 or more)"><div className="small">Check-in completion: 27%<br />Median weekly mood: Okay<br />Booking rate after amber outcome: 41%</div></Card></div><div className="col-md-6"><Card title="Consent withdrawal history"><div className="small">Nov 03: 3 withdrawals<br />Oct 21: 1 withdrawal<br />Oct 05: 2 withdrawals</div></Card></div></div>
-    <Card title="Activity log">{researchLog.map(([d, t]) => <div key={d + t} className="border-top py-1 small">{d}: {t}</div>)}</Card></>)
+  const { researchData } = useApp()
+  return (
+    <div className="research-page">
+      <h1 className="h3">Research overview</h1>
+      <Disclaimer>Prototype only. This page displays browser-local aggregate previews, not a secured research extract. Synthetic sample records are labelled; no ethics approval or live data processing is implied.</Disclaimer>
+      <Card title={`Aggregate release rule · k = ${AGGREGATION_THRESHOLD}`}>
+        <p>Only session-level means with at least {AGGREGATION_THRESHOLD} distinct C2-eligible rows are displayed. Smaller groups are suppressed.</p>
+        {!researchData.sessions.length && <p className="muted mb-0">No class sessions have been created in this browser.</p>}
+        {researchData.sessions.map(session => {
+          const summary = summarizeSession(researchData.responses, session.id)
+          return <div key={session.id} className="research-session">
+            <h2 className="h6">{session.title}</h2>
+            {summary.released ? (
+              <>
+                <p className="small muted">{summary.count} distinct rows · threshold passed</p>
+                {summary.syntheticCount > 0 && <p className="small text-warning-emphasis">{summary.syntheticCount} generated sample rows are synthetic and are not participant data.</p>}
+                <div className="row g-2">{DOMAINS.map(domain => <div className="col-6 col-lg" key={domain.id}><div className="aggregate-cell"><small>{domain.label}</small><strong>{summary.means[domain.id]} / 5</strong></div></div>)}</div>
+              </>
+            ) : <p className="small mb-0">Suppressed · {summary.count} distinct consenting participants; {AGGREGATION_THRESHOLD} required.</p>}
+          </div>
+        })}
+      </Card>
+      <Card title="Access and data status">
+        <ul className="mb-0">
+          <li>Participant-level export is not implemented.</li>
+          <li>Consent state and response rows are stored in browser local storage for this prototype.</li>
+          <li>Production controls—server-side role enforcement, append-only consent audit, retention/deletion jobs, and a protected research extract—are not implemented.</li>
+        </ul>
+      </Card>
+    </div>
+  )
 }
 
 export default ResearcherHome

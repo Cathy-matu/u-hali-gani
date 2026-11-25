@@ -1,17 +1,16 @@
-import { ArrowRight, BookOpen, CalendarDays, ClipboardCheck, Compass, Heart, HeartPulse, MessageCircle, Sparkles } from 'lucide-react'
+import { ArrowRight, BookOpen, CalendarDays, Compass, Heart, HeartPulse, MessageCircle, Sparkles, LineChart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../../context/AuthContext'
 import { resources } from '../../data/mock'
-import { Risk } from '../../components/common/ui'
 
 const shortcuts = [
   { to: '/student/mood', icon: HeartPulse, title: 'Check in with yourself', text: 'A quick mood check-in' },
-  { to: '/student/assessment', icon: ClipboardCheck, title: 'Weekly check-in', text: 'Notice how you’re doing' },
+  { to: '/student/journey', icon: LineChart, title: 'Class check-in & trends', text: 'Track five areas over time' },
   { to: '/student/book', icon: CalendarDays, title: 'Talk to a counsellor', text: 'Find the right support' },
 ]
 
 export function Dashboard() {
-  const { risk, bookings } = useApp()
+  const { bookings } = useApp()
   const next = bookings.find(booking => booking.status === 'Upcoming')
   const firstResource = resources[0]
   const hour = new Date().getHours()
@@ -60,8 +59,8 @@ export function Dashboard() {
           <div>
             <span className="dashboard-kicker">YOUR CHECK-IN</span>
             <h2>A moment for you</h2>
-            {risk ? <p>Your latest weekly check-in: <Risk r={risk} /></p> : <p>A private, two-minute check-in can help you notice how things are going.</p>}
-            <Link to="/student/assessment">{risk ? 'View your check-in' : 'Start a check-in'} <ArrowRight size={16} /></Link>
+            <p>A private, two-minute check-in can help you notice how things are going.</p>
+            <Link to="/student/assessment">Start a check-in <ArrowRight size={16} /></Link>
           </div>
         </section>
 
@@ -88,7 +87,7 @@ export function Dashboard() {
 
       <div className="student-dashboard-footnote">
         <MessageCircle size={16} />
-        <p>Hali can help you find support, but it isn’t an emergency service. <Link to="/student/help">Get urgent help</Link></p>
+        <p>Support options are here whenever you choose to use them. <Link to="/student/help">Support &amp; contacts</Link></p>
       </div>
     </div>
   )

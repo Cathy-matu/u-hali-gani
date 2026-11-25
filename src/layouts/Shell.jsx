@@ -7,14 +7,14 @@ import useDocumentTitle from '../hooks/useDocumentTitle'
 import { useApp } from '../context/AuthContext'
 export default function Shell({ nav, label, help }) {
   const [open, setOpen] = useState(false)
-  const { user, logout } = useApp()
+  const { user, isDemo, startDemo, logout } = useApp()
   const go = useNavigate()
   useDocumentTitle(label)
   const signOut = async () => {
     try {
       await logout()
-      go('/login', { replace: true })
-      toast.success('You are signed out.')
+      go(isDemo ? '/' : '/login', { replace: true })
+      toast.success(isDemo ? 'Preview ended.' : 'You are signed out.')
     } catch (error) {
       console.error('Unable to sign out of Hali.', error)
       toast.error('We could not sign you out. Please try again.')
@@ -31,9 +31,16 @@ export default function Shell({ nav, label, help }) {
         <div className="side-account">
           <div className="side-account-detail">
             <span className="side-account-avatar" aria-hidden="true">{user?.full_name?.trim().charAt(0).toUpperCase() || 'H'}</span>
-            <span className="side-account-copy"><small>Signed in as</small><strong title={user?.full_name}>{user?.full_name || 'Hali member'}</strong></span>
+            <span className="side-account-copy"><small>{isDemo ? 'Demo preview' : 'Signed in as'}</small><strong title={user?.full_name}>{user?.full_name || 'Hali member'}</strong></span>
           </div>
-          <button className="btn btn-outline-teal w-100" onClick={signOut}><LogOut size={16} />Sign out</button>
+          {isDemo && <div className="demo-role-switch" aria-label="Switch demo workspace">
+            {['student', 'counsellor', 'lecturer', 'researcher'].map(role => (
+              <button key={role} type="button" className="btn btn-soft" onClick={() => { startDemo(role); go(`/${role}`) }}>
+                {role[0].toUpperCase() + role.slice(1)}
+              </button>
+            ))}
+          </div>}
+          <button className="btn btn-outline-teal w-100" onClick={signOut}><LogOut size={16} />{isDemo ? 'Exit preview' : 'Sign out'}</button>
         </div>
       </aside>
       <div className="main">
@@ -44,7 +51,7 @@ export default function Shell({ nav, label, help }) {
         </header>
         <div className="app-content"><Outlet /></div>
       </div>
-      {help && <Link to="/student/help" className="btn btn-danger helpfab"><LifeBuoy size={18} />Get help now</Link>}
+      {help && <Link to="/student/help" className="btn btn-outline-teal helpfab"><LifeBuoy size={18} />Support &amp; contacts</Link>}
     </div>
   )
 }

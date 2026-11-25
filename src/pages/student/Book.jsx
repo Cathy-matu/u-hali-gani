@@ -19,7 +19,7 @@ export function Book() {
   const confirm = async () => { const b = { id: Date.now(), who: c.name, when: `${fmt(day)} ${slot}`, type, status: 'Upcoming' }; await bookingApi.book(b); setBookings([b, ...bookings]); setOk(true); toast.success('Appointment booked') }
   if (!cs) return <Loading />
   return (<><h1 className="h3">Counsellors</h1>
-    <div className="row g-3 mb-4">{cs.map(x => <div className="col-md-4" key={x.id}><Card className={c?.id === x.id ? 'border-success' : ''}><h3 className="h6">{x.name}</h3><p className="muted small mb-1">{x.spec}</p><p className="small">{x.modes.join(' · ')} · {x.online ? 'Online' : 'Offline'}</p><button className="btn btn-soft" onClick={() => { setC(x); setSlot(null); setOk(false) }}>Choose</button></Card></div>)}</div>
+    <div className="row g-3 mb-4">{cs.map(x => <div className="col-md-4" key={x.id}><Card className={c?.id === x.id ? 'border-success' : ''}><h3 className="h6">{x.name}</h3><button className="btn btn-soft" onClick={() => { setC(x); setSlot(null); setOk(false) }}>Choose</button></Card></div>)}</div>
     {c && !ok && <Card title={`Book with ${c.name}`}>
       <div className="mb-3" style={{ maxWidth: 380 }}><Calendar selected={day} onSelect={setDay} disabled={d => d < startOfToday() || [0, 6].includes(d.getDay())} /></div>
       <div className="mb-2">{slots.map(s => <button key={s} className={`btn me-1 mb-1 ${slot === s ? 'btn-teal' : 'btn-outline-teal'}`} onClick={() => setSlot(s)}>{s}</button>)}</div>

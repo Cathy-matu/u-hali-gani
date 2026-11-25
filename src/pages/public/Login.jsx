@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import { Logo } from '../../components/common/ui'
 import { useApp } from '../../context/AuthContext'
 import { authApi, getAuthErrorMessage } from '../../services/auth'
+import { offerPasswordSave } from '../../services/passwordManager'
 
 export function Login() {
   const { authReady, user, setUser } = useApp()
@@ -19,15 +20,22 @@ export function Login() {
     if (authReady && user) go(`/${user.role}`, { replace: true })
   }, [authReady, user, go])
 
+  const homeForRole = role => {
+    if (role === 'student' || role === 'counsellor') return `/${role}`
+    throw new Error(`Unsupported Hali account role: ${role}`)
+  }
+
   const submit = async event => {
     event.preventDefault()
     setError('')
     setSubmitting(true)
     try {
       const signedInUser = await authApi.login({ identifier: identifier.trim(), password })
+      const destination = homeForRole(signedInUser.role)
+      offerPasswordSave(identifier.trim(), password)
       setUser(signedInUser)
       toast.success('Welcome back.')
-      go(`/${signedInUser.role}`, { replace: true })
+      go(destination, { replace: true })
     } catch (requestError) {
       setError(getAuthErrorMessage(requestError, 'We could not sign you in. Please check your connection and try again.'))
     } finally {
@@ -49,13 +57,14 @@ export function Login() {
             <h1 id="login-title">Welcome back</h1>
             <p className="auth-intro">Sign in to your Hali account to continue. Students and counsellors use the same secure sign-in.</p>
 
-            <form className="auth-form" onSubmit={submit}>
+            <form className="auth-form" name="login" autoComplete="on" onSubmit={submit}>
               <div className="auth-field">
                 <label htmlFor="login-identifier">Username or university email</label>
                 <input
                   id="login-identifier"
                   className="form-control auth-email"
                   type="text"
+                  name="username"
                   autoComplete="username"
                   maxLength={254}
                   required
@@ -71,6 +80,7 @@ export function Login() {
                     id="login-password"
                     className="form-control auth-email"
                     type={showPassword ? 'text' : 'password'}
+                    name="password"
                     autoComplete="current-password"
                     maxLength={128}
                     required
@@ -91,6 +101,7 @@ export function Login() {
 
             <div className="auth-login-divider"><span>SECURE ACCESS</span></div>
             <p className="auth-privacy-note"><ShieldCheck size={17} /> Your account and wellbeing information stay private.</p>
+            <p className="auth-field-help">After sign-in, your browser may ask to save your username and password. Hali does not save passwords in browser storage.</p>
             <p className="auth-create-prompt">Need a Hali account? <Link to="/onboarding">Create one <ArrowRight size={14} /></Link></p>
           </div>
         </section>

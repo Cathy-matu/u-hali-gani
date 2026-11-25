@@ -1,7 +1,7 @@
 export const counsellors = [
-  { id: 1, name: 'Dr. Amina Wekesa', spec: 'Anxiety & academic stress', modes: ['In-person', 'Audio', 'Text'], online: true },
-  { id: 2, name: 'Mr. Brian Otieno', spec: 'Relationships & loneliness', modes: ['In-person', 'Text'], online: false },
-  { id: 3, name: 'Ms. Grace Mutua', spec: 'Sleep, mood & low motivation', modes: ['Audio', 'Text'], online: true },
+  { id: 1, name: 'Amina Wekesa', modes: ['In-person', 'Audio', 'Text'], online: true },
+  { id: 2, name: 'Brian Otieno', modes: ['In-person', 'Text'], online: false },
+  { id: 3, name: 'Grace Mutua', modes: ['Audio', 'Text'], online: true },
 ]
 export const slots = ['09:00', '10:30', '12:00', '14:00', '15:30']
 export const moods = [['Great', '😄'], ['Good', '🙂'], ['Okay', '😐'], ['Low', '😔'], ['Struggling', '😞']]

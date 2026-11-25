@@ -5,19 +5,20 @@ import toast from 'react-hot-toast'
 import { Logo } from '../../components/common/ui'
 import { useApp } from '../../context/AuthContext'
 import { authApi, getAuthErrorMessage } from '../../services/auth'
+import { offerPasswordSave } from '../../services/passwordManager'
 
-const steps = ['Welcome', 'Private by default', 'Create your account', 'Your Hali identity', 'Your privacy', 'Your choice']
+const steps = ['Welcome', 'Private by default', 'Create your account', 'Your Hali identity', 'Your privacy', 'Your consent choices']
 
 export function Onboarding() {
   const [i, setI] = useState(0)
   const [form, setForm] = useState({ fullName: '', username: '', email: '', role: 'student', password: '', confirmPassword: '', inviteCode: '' })
   const [fieldErrors, setFieldErrors] = useState({})
   const [requestError, setRequestError] = useState('')
-  const [researchConsent, setResearchConsent] = useState(false)
+  const [consentChoices, setConsentChoices] = useState({ participation: false, research: false, leaderboard: false, recontact: false })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const { authReady, user, setUser, setConsent } = useApp()
+  const { authReady, user, setUser } = useApp()
   const go = useNavigate()
 
   useEffect(() => {
@@ -29,6 +30,17 @@ export function Onboarding() {
     setForm(current => ({ ...current, [name]: value }))
     setFieldErrors(current => ({ ...current, [name]: '' }))
     setRequestError('')
+  }
+
+  const updateConsentChoice = (key, value) => {
+    setConsentChoices(current => {
+      const next = { ...current, [key]: value }
+      if (key === 'participation' && !value) {
+        next.research = false
+        next.leaderboard = false
+      }
+      return next
+    })
   }
 
   const validateAccount = () => {
@@ -60,12 +72,12 @@ export function Onboarding() {
         email: form.email.trim(),
         password: form.password,
         role: form.role,
-        counsellor_invite_code: form.role === 'counsellor' ? form.inviteCode : undefined,
-        research_consent: researchConsent,
+        counsellor_invite_code: form.role === 'counsellor' ? form.inviteCode.trim() : undefined,
+        research_consent: consentChoices.research,
         recontact_consent: false,
       })
-      setConsent({ research: researchConsent, recontact: false })
-      setUser(newUser)
+      offerPasswordSave(form.username.trim(), form.password)
+      setUser(newUser, consentChoices)
       toast.success('Your Hali account is ready.')
       go(`/${newUser.role}`, { replace: true })
     } catch (error) {
@@ -77,7 +89,7 @@ export function Onboarding() {
 
   const body = [
     <p>Hali is a calm place to check in with yourself and reach a human counsellor.</p>,
-    <p>You take part under a pseudonym. Anonymity is the default. It can be broken only under a defined emergency protocol involving imminent risk.</p>,
+    <p>The design uses pseudonymous student-facing identifiers. This prototype does not implement production anonymity controls or an emergency identity-release workflow.</p>,
     <div className="auth-account-fields">
       <div className="auth-field">
         <label htmlFor="account-name">Full name</label>
@@ -109,7 +121,7 @@ export function Onboarding() {
         <div className="auth-field">
           <label htmlFor="account-invite">Counsellor invitation code</label>
           <input id="account-invite" className="form-control auth-email" name="inviteCode" autoComplete="off" maxLength={256} value={form.inviteCode} onChange={update} aria-invalid={Boolean(fieldErrors.inviteCode)} aria-describedby={fieldErrors.inviteCode ? 'invite-error' : 'invite-hint'} />
-          <span id={fieldErrors.inviteCode ? 'invite-error' : 'invite-hint'} className={fieldErrors.inviteCode ? 'auth-field-error' : 'auth-field-help'}>{fieldErrors.inviteCode || 'Ask your university administrator for an invitation.'}</span>
+          <span id={fieldErrors.inviteCode ? 'invite-error' : 'invite-hint'} className={fieldErrors.inviteCode ? 'auth-field-error' : 'auth-field-help'}>{fieldErrors.inviteCode || 'Enter the invitation code exactly as provided. Extra spaces around it are ignored.'}</span>
         </div>
       )}
       <div className="auth-field">
@@ -130,8 +142,24 @@ export function Onboarding() {
       </div>
     </div>,
     <p>Your unique Hali identity is generated when your account is created.<br /><span className="muted">Counsellors see your pseudonym, not your name.</span></p>,
-    <p>Administrators see aggregate numbers only. Small groups are hidden. Your reflections are not shared with the university.</p>,
-    <label className="auth-consent-option"><input type="checkbox" className="form-check-input" checked={researchConsent} onChange={event => setResearchConsent(event.target.checked)} /> <span>Optionally share de-identified data for research. This is separate from counselling and you can withdraw any time.</span></label>,
+    <p>Before real wellbeing data are collected, server-enforced access controls, aggregation, support escalation and data-retention processes must be implemented and approved.</p>,
+    <div className="signup-consent">
+      <p>These are separate choices. They all start off, and you can change them later in Privacy. Declining research or leaderboard use does not limit personal tools or support.</p>
+      {[
+        ['participation', 'C1 · Check-in participation', 'Store check-ins for your own progression view.'],
+        ['research', 'C2 · Research contribution', 'Allow eligible check-ins to contribute to research aggregates. Requires C1.'],
+        ['leaderboard', 'C3 · Leaderboard visibility', 'Allow your pseudonymous handle to appear on a leaderboard. Requires C1.'],
+      ].map(([key, label, description]) => (
+        <div className="consent-choice" key={key}>
+          <div className="form-check form-switch mb-1">
+            <input id={`signup-consent-${key}`} className="form-check-input" type="checkbox" checked={consentChoices[key]} disabled={key !== 'participation' && !consentChoices.participation} onChange={event => updateConsentChoice(key, event.target.checked)} />
+            <label className="form-check-label fw-semibold" htmlFor={`signup-consent-${key}`}>{label}</label>
+          </div>
+          <p className="small muted mb-0">{description}</p>
+        </div>
+      ))}
+      <p className="small muted mb-0">You can see and withdraw your choices later in Privacy. The prototype does not enforce these controls on a server.</p>
+    </div>,
   ]
 
   return (

@@ -1,11 +1,12 @@
 import { ArrowDown, ArrowRight, HeartHandshake, ShieldCheck, Sparkles, UsersRound } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Logo, Disclaimer } from '../../components/common/ui'
+import { useApp } from '../../context/AuthContext'
 
 const faqs = [
-  ['Is Hali anonymous?', 'Hali uses a pseudonym in student care workflows. Your identity is only revealed under the defined emergency protocol for imminent risk.'],
+  ['Is Hali anonymous?', 'The design uses pseudonymous student-facing identifiers. This prototype does not implement production anonymity controls or an emergency identity-release workflow.'],
   ['Is Hali a diagnosis?', 'No. Check-ins are screening tools that can help connect you with a human counsellor.'],
-  ['Is Hali an emergency service?', 'No. If you or someone else is in immediate danger, contact campus security or local emergency services.'],
+  ['Is Hali an emergency service?', 'No. Support contacts in this prototype are placeholders and must be replaced with verified campus and local services before real-world use. If someone is in immediate danger, contact verified emergency services.'],
 ]
 
 const waysToConnect = [
@@ -20,6 +21,13 @@ const scrollToSection = (event, sectionId) => {
 }
 
 export function Landing() {
+  const { startDemo } = useApp()
+  const go = useNavigate()
+  const preview = role => {
+    startDemo(role)
+    go(`/${role}`)
+  }
+
   return (
     <div className="landing-page">
       <header className="landing-header">
@@ -39,9 +47,14 @@ export function Landing() {
             <h1>Your wellbeing belongs here.</h1>
             <p>University life can be a lot. Hali helps you check in with yourself, find human support, and feel a little more at home on campus.</p>
             <div className="landing-hero-actions">
-              <Link to="/onboarding" className="landing-primary-button">Find your place <ArrowRight size={18} /></Link>
-              <Link to="/login" className="landing-secondary-button">I already have an account</Link>
+              <button type="button" className="landing-primary-button" onClick={() => preview('student')}>Preview student space <ArrowRight size={18} /></button>
+              <button type="button" className="landing-secondary-button" onClick={() => preview('counsellor')}>Preview counsellor workspace</button>
             </div>
+            <div className="landing-hero-actions">
+              <button type="button" className="landing-secondary-button" onClick={() => preview('lecturer')}>Preview lecturer sessions</button>
+              <button type="button" className="landing-secondary-button" onClick={() => preview('researcher')}>Preview research dashboard</button>
+            </div>
+            <p className="landing-trust-note">No sign-in required · Uses sample data for presentations.</p>
             <div className="landing-trust-note"><ShieldCheck size={17} /> Your care journey is yours to shape.</div>
           </div>
           <div className="landing-photo-collage" aria-label="Students spending time together on campus">
@@ -98,7 +111,7 @@ export function Landing() {
 
         <section className="landing-assurance">
           <div className="landing-assurance-heading"><ShieldCheck size={23} /><h2>Your privacy and safety come first.</h2></div>
-          <p>Student care workflows use a pseudonym. Administrators see aggregates, and groups under 10 students are hidden. Anonymity can be broken only under the emergency protocol. In-person, audio and text counselling are available; video is planned for a future release.</p>
+          <p>The prototype demonstrates intended student-centred privacy and support flows using sample data. Server-enforced access controls, live aggregate governance, verified support contacts and emergency escalation must be completed before it can handle real wellbeing data.</p>
           <div className="landing-faqs">
             <h3>Good to know</h3>
             {faqs.map(([question, answer]) => <details key={question}><summary>{question}</summary><p>{answer}</p></details>)}

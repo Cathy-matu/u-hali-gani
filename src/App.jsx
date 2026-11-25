@@ -8,10 +8,12 @@ import StudentLayout from './layouts/StudentLayout'
 import CounsellorLayout from './layouts/CounsellorLayout'
 import AdminLayout from './layouts/AdminLayout'
 import ResearcherLayout from './layouts/ResearcherLayout'
+import LecturerLayout from './layouts/LecturerLayout'
 const PublicLanding = lazy(() => import('./pages/public/Landing'))
 const PublicLogin = lazy(() => import('./pages/public/Login'))
 const PublicOnboarding = lazy(() => import('./pages/public/Onboarding'))
 const StudentDashboard = lazy(() => import('./pages/student/Dashboard'))
+const StudentJourney = lazy(() => import('./pages/student/WellbeingJourney'))
 const StudentCommunities = lazy(() => import('./pages/student/Communities'))
 const StudentMood = lazy(() => import('./pages/student/Mood'))
 const StudentAssessment = lazy(() => import('./pages/student/Assessment'))
@@ -21,6 +23,7 @@ const StudentMessages = lazy(() => import('./pages/student/Messages'))
 const StudentAssistant = lazy(() => import('./pages/student/Assistant'))
 const StudentPrivacy = lazy(() => import('./pages/student/Privacy'))
 const StudentHelp = lazy(() => import('./pages/student/Help'))
+const Profile = lazy(() => import('./pages/shared/Profile'))
 const CounsellorOverview = lazy(() => import('./pages/counsellor/Overview'))
 const CounsellorCases = lazy(() => import('./pages/counsellor/Cases'))
 const CounsellorCaseDetail = lazy(() => import('./pages/counsellor/CaseDetail'))
@@ -33,11 +36,15 @@ const AdminPrivacyRules = lazy(() => import('./pages/admin/PrivacyRules'))
 const AdminManagement = lazy(() => import('./pages/admin/Management'))
 const ResearcherOverview = lazy(() => import('./pages/researcher/Overview'))
 const ResearcherConsent = lazy(() => import('./pages/researcher/Consent'))
+const LecturerSessions = lazy(() => import('./pages/lecturer/Sessions'))
+const LecturerProfile = lazy(() => import('./pages/shared/Profile'))
 
 const Guard = ({ need, children }) => {
   const { role, authReady } = useApp()
   if (!authReady) return <Loading text="Restoring your secure session..." />
-  return role === need ? children : <Navigate to="/login" replace />
+  if (!role) return <Navigate to="/login" replace />
+  if (role !== need) return <Navigate to={`/${role}`} replace />
+  return children
 }
 export default function App() {
   return (<>
@@ -48,19 +55,22 @@ export default function App() {
           <Route path="/" element={<PublicLanding />} /><Route path="/login" element={<PublicLogin />} /><Route path="/onboarding" element={<PublicOnboarding />} />
         </Route>
         <Route path="/student" element={<Guard need="student"><StudentLayout /></Guard>}>
-          <Route index element={<StudentDashboard />} /><Route path="communities" element={<StudentCommunities />} /><Route path="mood" element={<StudentMood />} /><Route path="assessment" element={<StudentAssessment />} />
+          <Route index element={<StudentDashboard />} /><Route path="journey" element={<StudentJourney />} /><Route path="communities" element={<StudentCommunities />} /><Route path="mood" element={<StudentMood />} /><Route path="assessment" element={<StudentAssessment />} />
           <Route path="resources" element={<StudentResources />} /><Route path="book" element={<StudentBook />} /><Route path="messages" element={<StudentMessages />} />
-          <Route path="assistant" element={<StudentAssistant />} /><Route path="privacy" element={<StudentPrivacy />} /><Route path="help" element={<StudentHelp />} />
+          <Route path="assistant" element={<StudentAssistant />} /><Route path="privacy" element={<StudentPrivacy />} /><Route path="help" element={<StudentHelp />} /><Route path="profile" element={<Profile />} />
         </Route>
         <Route path="/counsellor" element={<Guard need="counsellor"><CounsellorLayout /></Guard>}>
           <Route index element={<CounsellorOverview />} /><Route path="cases" element={<CounsellorCases />} /><Route path="cases/:id" element={<CounsellorCaseDetail />} />
-          <Route path="risk" element={<CounsellorRisk />} /><Route path="appointments" element={<CounsellorAppointments />} /><Route path="messages" element={<CounsellorMessages />} />
+          <Route path="risk" element={<CounsellorRisk />} /><Route path="appointments" element={<CounsellorAppointments />} /><Route path="messages" element={<CounsellorMessages />} /><Route path="profile" element={<Profile />} />
         </Route>
         <Route path="/admin" element={<Guard need="admin"><AdminLayout /></Guard>}>
           <Route index element={<AdminOverview />} /><Route path="analytics" element={<AdminAnalytics />} /><Route path="privacy" element={<AdminPrivacyRules />} /><Route path="management" element={<AdminManagement />} />
         </Route>
         <Route path="/researcher" element={<Guard need="researcher"><ResearcherLayout /></Guard>}>
           <Route index element={<ResearcherOverview />} /><Route path="consent" element={<ResearcherConsent />} />
+        </Route>
+        <Route path="/lecturer" element={<Guard need="lecturer"><LecturerLayout /></Guard>}>
+          <Route index element={<LecturerSessions />} /><Route path="profile" element={<LecturerProfile />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

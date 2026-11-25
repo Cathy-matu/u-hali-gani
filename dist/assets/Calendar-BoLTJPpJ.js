@@ -1,0 +1,11 @@
+import{c as i,j as n}from"./index-CHXc61ET.js";import{r as b}from"./vendor-BdJ5MasG.js";/**
+ * @license lucide-react v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const f=i("ChevronLeft",[["path",{d:"m15 18-6-6 6-6",key:"1wnfg3"}]]);/**
+ * @license lucide-react v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const p=i("ChevronRight",[["path",{d:"m9 18 6-6-6-6",key:"mthhwq"}]]),o=e=>`${e.getFullYear()}-${e.getMonth()+1}-${e.getDate()}`,j=e=>e?e.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}):"",D=()=>{const e=new Date;return e.setHours(0,0,0,0),e};function w({selected:e,onSelect:c,events:h={},disabled:m=()=>!1}){const[a,l]=b.useState(()=>{const t=new Date(e||Date.now());return new Date(t.getFullYear(),t.getMonth(),1)}),g=(a.getDay()+6)%7,d=Array.from({length:42},(t,s)=>new Date(a.getFullYear(),a.getMonth(),s-g+1));return n.jsxs("div",{className:"card-h p-2",children:[n.jsxs("div",{className:"d-flex justify-content-between align-items-center mb-2",children:[n.jsx("button",{className:"btn btn-soft","aria-label":"Previous month",onClick:()=>l(new Date(a.getFullYear(),a.getMonth()-1,1)),children:n.jsx(f,{size:16})}),n.jsx("b",{children:a.toLocaleDateString("en-GB",{month:"long",year:"numeric"})}),n.jsx("button",{className:"btn btn-soft","aria-label":"Next month",onClick:()=>l(new Date(a.getFullYear(),a.getMonth()+1,1)),children:n.jsx(p,{size:16})})]}),n.jsx("div",{className:"d-grid text-center small muted",style:{gridTemplateColumns:"repeat(7,1fr)"},children:["M","T","W","T","F","S","S"].map((t,s)=>n.jsx("div",{children:t},s))}),n.jsx("div",{className:"d-grid gap-1",style:{gridTemplateColumns:"repeat(7,1fr)"},children:d.map(t=>{const s=t.getMonth()!==a.getMonth(),r=e&&o(t)===o(e),u=h[o(t)];return n.jsxs("button",{disabled:m(t),"aria-label":t.toDateString(),"aria-pressed":!!r,onClick:()=>c(t),className:`btn p-0 ${r?"btn-teal":"btn-outline-light text-dark"}`,style:{minHeight:44,opacity:s?.4:1},children:[t.getDate(),u?n.jsx("span",{style:{display:"block",width:6,height:6,borderRadius:9,background:r?"#fff":"var(--teal)",margin:"0 auto"}}):null]},t.toISOString())})})]})}export{w as C,j as f,o as i,D as s};

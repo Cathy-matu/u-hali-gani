@@ -2,31 +2,30 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { Phone, Search } from 'lucide-react'
-import { Card, Badge, Empty, Loading, Disclaimer, Modal, Risk } from '../../components/common/ui'
+import { Card, Badge, Empty, Loading, Disclaimer, Modal } from '../../components/common/ui'
 import Chat from '../../components/common/Chat'
-import { useApp } from '../../context/AuthContext'
 import { moods, moodHistory, resources, counsellors, slots, helpContacts, assistantReplies } from '../../data/mock'
 import { SHORT, FULL, FREQ, WHO_OPT } from '../../data/instruments'
-import { scoreAll, routeRisk } from '../../utils/scoring'
+import { scoreAll } from '../../utils/scoring'
 import Calendar, { fmt, startOfToday } from '../../components/forms/Calendar'
 import { checkinApi, assessmentApi, bookingApi, consentApi } from '../../services/api'
 
-function Result({ r, sc, mode, go }) {
-  const M = { green: ['Self-help resources', 'Your answers suggest things look manageable right now. These resources may help.', '/student/resources', 'Browse resources'], amber: ['We’d encourage you to talk to a counsellor', 'Your answers suggest some strain. Talking to a person can help, and booking takes a minute.', '/student/book', 'Book a counsellor'], red: ['Let’s get you to a person now', 'A human counsellor is being alerted. You do not need to explain everything again.', '/student/help', 'Connect with a counsellor now'] }[r]
-  return (<Card title={M[0]}><Risk r={r} /><p className="mt-2">{M[1]}</p>
-    {mode === 'full' && <p className="small">Scores: PHQ-9 {sc.phq}/27 · GAD-7 {sc.gad}/21 · WHO-5 wellbeing {sc.who * 4}/100. These help a counsellor see how you are doing. They are not a diagnosis.</p>}
-    {r === 'red' && <div className="notice mb-3" style={{ background: 'var(--redbg)' }}><b>Warm handoff started (demo).</b> On-duty counsellor notified · estimated response: under 5 minutes. If you are in immediate danger, contact campus security or emergency services.</div>}
-    <button className={`btn ${r === 'red' ? 'btn-danger' : 'btn-teal'}`} onClick={() => go(M[2])}>{M[3]}</button>
+function Result({ sc, mode, go }) {
+  return (<Card title="Thank you for checking in">
+    <p>Your answers are one snapshot of how you have been feeling. They do not define you and are not a diagnosis.</p>
+    {mode === 'full' && <p className="small">Scores: PHQ-9 {sc.phq}/27 · GAD-7 {sc.gad}/21 · WHO-5 wellbeing {sc.who * 4}/100. These are screening scores, not a diagnosis or a complete picture of you.</p>}
+    <p className="small muted">This check-in does not automatically contact a counsellor or send an alert. Support information is available separately in your workspace.</p>
+    <button className="btn btn-teal" onClick={() => go('/student')}>Return to my space</button>
     <p className="small muted mt-3 mb-0">Screening, not diagnosis. Hali does not replace professional care.</p></Card>)
 }
 
 export function Assessment() {
-  const { setRisk } = useApp(); const go = useNavigate()
+  const go = useNavigate()
   const [mode, setMode] = useState(null); const [i, setI] = useState(0); const [a, setA] = useState({}); const [res, setRes] = useState(null); const [busy, setBusy] = useState(false)
   const items = mode === 'full' ? FULL : SHORT
   const start = m => { setMode(m); setI(0); try { setA(JSON.parse(sessionStorage.getItem('hali-draft-' + m) || '{}')) } catch { setA({}) } }
   const pick = v => { const n = { ...a, [items[i].id]: v }; setA(n); sessionStorage.setItem('hali-draft-' + mode, JSON.stringify(n)) }
-  const submit = async () => { setBusy(true); await assessmentApi.submit(a); const sc = scoreAll(a); const r = routeRisk(mode, sc); setRisk(r); setRes({ r, sc }); sessionStorage.removeItem('hali-draft-' + mode); setBusy(false) }
+  const submit = async () => { setBusy(true); await assessmentApi.submit(a); const sc = scoreAll(a); setRes({ sc }); sessionStorage.removeItem('hali-draft-' + mode); setBusy(false) }
   if (res) return <Result {...res} mode={mode} go={go} />
   if (!mode) return (<><h1 className="h3">Weekly check-in</h1><div className="row g-3">
     <div className="col-md-6"><Card title="Quick check-in (5 questions)"><p>PHQ-2, GAD-2 and one safety question. About 1 minute.</p><button className="btn btn-teal" onClick={() => start('short')}>Start quick check-in</button></Card></div>

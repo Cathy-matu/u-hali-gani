@@ -13,7 +13,7 @@ import { checkinApi, assessmentApi, bookingApi, consentApi } from '../../service
 
 
 export function Messages() {
-  return (<><h1 className="h3">Messages</h1><Chat replyAs="them" threads={[{ name: 'Dr. Amina Wekesa', online: true, unread: 0, msgs: [{ from: 'them', text: 'Hi, looking forward to Friday. Bring anything you want to talk about.', time: 'Yesterday', read: true }] }, { name: 'Counselling front desk', online: false, unread: 1, msgs: [{ from: 'them', text: 'Reminder: you can reschedule up to 24 hours before.', time: 'Mon' }] }]} /></>)
+  return (<><h1 className="h3">Messages</h1><Chat replyAs="them" threads={[{ name: 'Amina Wekesa', online: true, unread: 0, msgs: [{ from: 'them', text: 'Hi, looking forward to Friday. Bring anything you want to talk about.', time: 'Yesterday', read: true }] }, { name: 'Counselling front desk', online: false, unread: 1, msgs: [{ from: 'them', text: 'Reminder: you can reschedule up to 24 hours before.', time: 'Mon' }] }]} /></>)
 }
 
 export default Messages

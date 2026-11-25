@@ -32,5 +32,11 @@ export function getAuthErrorMessage(error, fallback) {
   if (Array.isArray(detail)) {
     return detail.map(item => item.msg).filter(Boolean).join(' ') || fallback
   }
+  if (!error?.response && error?.request) {
+    return 'Hali could not reach the sign-in service. Check that the backend is running, then try again.'
+  }
+  if (error?.response?.status >= 500) {
+    return 'The Hali sign-in service is temporarily unavailable. Please try again shortly.'
+  }
   return fallback
 }
